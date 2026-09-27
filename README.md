@@ -155,7 +155,7 @@ Then open `http://localhost:8765/`.
 The Procfile uses:
 
 ```text
-web: uvicorn app:app --host 0.0.0.0 --port $PORT
+web: uvicorn app:app --host 0.0.0.0 --port $PORT --proxy-headers --forwarded-allow-ips="*"
 ```
 
 ## User Flow
