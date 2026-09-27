@@ -155,7 +155,7 @@ Then open `http://localhost:8765/`.
 The Procfile uses:
 
 ```text
-web: python app.py
+web: uvicorn app:app --host 0.0.0.0 --port $PORT
 ```
 
 ## User Flow

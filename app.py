@@ -1271,5 +1271,6 @@ if __name__ == '__main__':
     storage.load_web_user_email_assignments()
     storage.load_renewal_decisions()
     storage.load_admin_expiry_permissions()
-    port = int(os.environ.get('FLASK_PORT') or os.environ.get('PORT') or 5000)
+    # Railway supplies PORT; prefer it over the legacy local FLASK_PORT value.
+    port = int(os.environ.get('PORT') or os.environ.get('FLASK_PORT') or 5000)
     uvicorn.run(app, host='0.0.0.0', port=port)
