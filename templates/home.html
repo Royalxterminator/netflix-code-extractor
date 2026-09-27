@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Netflix Opening</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      font-family: 'Roboto', sans-serif;
+      background-color: #233142;
+    }
+    #container {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+    #overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      color: #e3e3e3;
+      z-index: 1;
+    }
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 20px;
+    }
+    .btn {
+      padding: 10px 20px;
+      background-color: #b80257;
+      border: none;
+      color: #e3e3e3;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .btn:hover {
+      background-color: #f95959;
+    }
+    .poster-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      z-index: 999;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.5s, visibility 0.5s;
+    }
+    .poster-container.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    .poster-slide {
+      position: relative;
+      width: 250px;
+      height: 400px;
+      margin: 20px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.5s, opacity 0.5s;
+    }
+    .poster-slide:hover {
+      transform: scale(1.1);
+    }
+    .poster-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .poster-details {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-color: rgba(0, 0, 0, 0.7);
+      padding: 10px;
+      color: #fff;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .poster-slide:hover .poster-details {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div id="container"></div>
+  <div id="overlay">
+    <h1>Welcome to Netflix</h1>
+    <button class="btn" onclick="window.location.href='{{ url_for('login') }}'">Get Started <i class="fas fa-chevron-right"></i></button>
+  </div>
+
+  <div class="poster-container" id="posterContainer" onclick="hidePosters()">
+    <div class="poster-slide">
+      <img class="poster-img" src="https://i.pinimg.com/474x/51/24/d1/5124d1d3cd2d6513448fe45e65aca8d3.jpg" alt="Movie Poster">
+      <div class="poster-details"><p>Movie Name 1</p><p>IMDb Rating: 8.5</p></div>
+    </div>
+    <div class="poster-slide">
+      <img class="poster-img" src="https://static1.showtimes.com/poster/660x980/riverdale-netflix-131772.jpg" alt="Movie Poster">
+      <div class="poster-details"><p>Movie Name 2</p><p>IMDb Rating: 7.9</p></div>
+    </div>
+    <div class="poster-slide">
+      <img class="poster-img" src="https://www.indiewire.com/wp-content/uploads/2017/09/barry-2016.jpg" alt="Movie Poster">
+      <div class="poster-details"><p>Movie Name 3</p><p>IMDb Rating: 8.2</p></div>
+    </div>
+    <div class="poster-slide">
+      <img class="poster-img" src="https://pbs.twimg.com/media/Ec_7SzOUEAAuGit.jpg" alt="Movie Poster">
+      <div class="poster-details"><p>Movie Name 4</p><p>IMDb Rating: 7.7</p></div>
+    </div>
+    <div class="poster-slide">
+      <img class="poster-img" src="https://i.pinimg.com/originals/d4/80/e2/d480e25470cfd9ec06e323e6330105ae.jpg" alt="Movie Poster">
+      <div class="poster-details"><p>Movie Name 5</p><p>IMDb Rating: 8.0</p></div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r124/three.min.js"></script>
+  <script>
+    let scene, camera, renderer;
+
+    function init() {
+      scene = new THREE.Scene();
+      camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1000);
+      camera.position.z = 100;
+      renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.getElementById('container').appendChild(renderer.domElement);
+
+      let particleCount = 1000;
+      let particleMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 1 });
+      let particleGeometry = new THREE.BufferGeometry();
+      let positions = [];
+      let colors = [];
+
+      for (let i = 0; i < particleCount; i++) {
+        let x = Math.random() * 200 - 100;
+        let y = Math.random() * 200 - 100;
+        let z = Math.random() * 200 - 100;
+        positions.push(x, y, z);
+        let r = Math.random();
+        let g = Math.random();
+        let b = Math.random();
+        let color = new THREE.Color(r, g, b);
+        colors.push(color.r, color.g, color.b);
+      }
+      particleGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+      particleGeometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+      let particleSystem = new THREE.Points(particleGeometry, particleMaterial);
+      scene.add(particleSystem);
+      animate();
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      let time = Date.now() * 0.00005;
+      scene.children[0].rotation.y = time * 0.2;
+      let positions = scene.children[0].geometry.attributes.position.array;
+      for (let i = 0; i < positions.length; i += 3) {
+        positions[i] += Math.sin(time + i * 0.01) * 0.1;
+        positions[i + 1] += Math.cos(time + i * 0.01) * 0.1;
+        positions[i + 2] += Math.sin(time + i * 0.01) * 0.1;
+      }
+      scene.children[0].geometry.attributes.position.needsUpdate = true;
+      renderer.render(scene, camera);
+    }
+
+    window.addEventListener('resize', function() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    function showPosters() {
+      document.getElementById('posterContainer').classList.toggle('active');
+    }
+
+    function hidePosters() {
+      document.getElementById('posterContainer').classList.remove('active');
+    }
+
+    init();
+  </script>
+</body>
+</html>

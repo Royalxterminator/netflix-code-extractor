@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Settings · {{ app_name }}{% endblock %}
+{% block content %}
+<header class="page-head">
+  <div><p class="eyebrow">System</p><h1>Settings</h1><p class="page-subtitle">Configure the IMAP mailbox and lock individual search categories behind a password.</p></div>
+  <a class="btn btn-primary" href="{{ url_for('download_data') }}">⬇️ Download Data ZIP</a>
+</header>
+
+<section class="panel">
+  <div class="panel-head"><h2>IMAP Mailbox</h2><span class="muted">used to fetch emails</span></div>
+  <form method="post" class="form-grid form-medium">
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token }}">
+    <label>IMAP Email
+      <input type="email" name="imap_email" value="{{ imap_email }}" placeholder="you@gmail.com" autocomplete="off" required>
+    </label>
+    <label>IMAP Password <small class="muted">App password for Gmail (or mailbox password)</small>
+      <input type="password" name="imap_pass" value="{{ imap_pass }}" placeholder="Enter to update" autocomplete="new-password">
+    </label>
+    <button class="btn btn-primary" type="submit">Save IMAP Settings</button>
+  </form>
+</section>
+
+<section class="panel">
+  <div class="panel-head"><h2>Category Locks</h2><span class="muted">require a password before a category can be searched</span></div>
+  <form method="post" class="form-grid">
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token }}">
+    <div class="permission-grid">
+      {% for key in category_keys %}
+      <label class="toggle-row lock-row" data-key="{{ key }}">
+        <span>{{ labels[key].icon }} {{ labels[key].label }}<small>Require password</small></span>
+        <input class="lock-toggle" type="checkbox" name="lock_enabled" value="{{ key }}" {% if locks[key].enabled %}checked{% endif %}>
+        <i></i>
+      </label>
+      {% endfor %}
+    </div>
+    <div class="lock-pass-grid">
+      {% for key in category_keys %}
+      <label data-lock-pass="{{ key }}" {% if not locks[key].enabled %}hidden{% endif %}>
+        {{ labels[key].label }} password
+        <input type="password" name="lock_password_{{ key }}" value="{{ locks[key].password or '' }}" placeholder="Set password" autocomplete="off">
+      </label>
+      {% endfor %}
+    </div>
+    <button class="btn btn-primary" type="submit">Save Locks</button>
+  </form>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+  document.querySelectorAll('.lock-toggle').forEach(function (toggle) {
+    function sync() {
+      var key = toggle.closest('.lock-row').dataset.key;
+      var pass = document.querySelector('[data-lock-pass="' + key + '"]');
+      if (pass) pass.hidden = !toggle.checked;
+    }
+    toggle.addEventListener('change', sync);
+  });
+</script>
+{% endblock %}

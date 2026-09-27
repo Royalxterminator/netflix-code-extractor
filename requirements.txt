@@ -1,0 +1,8 @@
+fastapi
+uvicorn[standard]
+jinja2
+python-multipart
+itsdangerous
+werkzeug
+python-dotenv==1.2.2
+pytz

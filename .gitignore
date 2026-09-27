@@ -1,0 +1,98 @@
+# ============================================
+# Environment & Secrets
+# ============================================
+.env
+.env.*
+!.env.example
+credentials.json
+token*.json
+token*.pickle
+*_token.json
+client_secret*.json
+
+# ============================================
+# Python
+# ============================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+*.egg
+dist/
+build/
+eggs/
+sdist/
+wheels/
+*.whl
+.eggs/
+*.pyc
+
+# ============================================
+# Virtual Environments
+# ============================================
+venv/
+.venv/
+env/
+ENV/
+
+# ============================================
+# IDE & Editor
+# ============================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.settings/
+
+# ============================================
+# OS Generated Files
+# ============================================
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.lnk
+ehthumbs.db
+
+# ============================================
+# SQLite Database (runtime data - do NOT commit)
+# ============================================
+*.sqlite3
+*.sqlite3-journal
+*.sqlite3-wal
+*.sqlite3-shm
+
+# ============================================
+# Bot Runtime Data (persistent volume files)
+# ============================================
+approved_users.json
+sub_admin_users.json
+sub_admin_assignments.json
+user_email_assignments.json
+renewal_decisions.json
+admin_expiry_permissions.json
+email_renewal_history.json
+access_log.txt
+*.pkl
+*.pkl.backup
+write_test.tmp
+
+# ============================================
+# Backup Archives
+# ============================================
+backups/
+*.zip
+
+# ============================================
+# Logs
+# ============================================
+*.log
+logs/
+
+# ============================================
+# Railway / Deployment (if applicable)
+# ============================================
+.railway/
+railway.toml

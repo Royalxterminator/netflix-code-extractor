@@ -1,0 +1,36 @@
+your_project/
+├── app.py                         # Unified Flask app (web + API)
+├── email_bot/                     # Your existing bot modules (unchanged)
+│   ├── __init__.py
+│   ├── config.py
+│   ├── storage.py
+│   ├── expiry.py
+│   ├── permissions.py
+│   ├── email_fetcher.py
+│   ├── extractors.py
+│   ├── utils.py
+│   ├── api.py                     # (optional – we'll merge routes into app.py)
+│   └── ...
+├── templates/                     # All HTML templates (as provided)
+│   ├── splash.html
+│   ├── home.html
+│   ├── login.html
+│   ├── register.html
+│   ├── dashboard.html
+│   ├── users.html
+│   ├── user_detail.html
+│   ├── emails.html
+│   ├── renewals.html
+│   ├── search.html
+│   ├── my_emails.html
+│   ├── logs.html
+│   ├── settings.html
+│   ├── confirm_override.html
+│   └── error.html
+├── static/                        # Static assets
+│   ├── css/
+│   │   └── style.css              # (as provided)
+│   └── js/
+│       └── app.js                 # (as provided)
+├── email_bot.sqlite3              # Unified SQLite database for bot and web data
+└── requirements.txt               # (we'll include flask, etc.)

@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign in · Watch Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="login-page">
+  <main class="login-card">
+    <div class="auth-logo" style="font-size:26px;color:#fff;letter-spacing:0;">N</div>
+    <p class="eyebrow">Secure workspace</p><h1>Welcome back.</h1>
+    <p class="login-intro">Sign in to your email operations workspace and pick up where you left off.</p>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}
+    {% endwith %}
+    {% if error %}<div class="flash danger">{{ error }}</div>{% endif %}
+    <form method="post" action="{{ url_for('login') }}">
+      <input type="hidden" name="_csrf_token" value="{{ csrf_token }}">
+      <div class="user"><label for="username">Username</label><input id="username" type="text" name="username" autocomplete="username" required></div>
+      <div class="user"><label for="password">Password</label><input id="password" type="password" name="password" autocomplete="current-password" required></div>
+      <div class="login-meta"><label><input type="checkbox" name="remember" id="remember"> Remember me</label></div>
+      <button type="submit" class="btn-submit">Sign in <span>→</span></button>
+    </form>
+    <p style="text-align:center;margin:18px 0 0;"><a href="{{ url_for('search_page') }}" style="color:#ff8790;font-weight:700;">Go to public search →</a></p>
+  </main>
+</body>
+</html>

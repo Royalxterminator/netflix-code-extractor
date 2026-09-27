@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}{{ target.username }} · Users{% endblock %}
+{% block content %}
+<header class="page-head">
+  <div><p class="eyebrow">User Profile</p><h1>{{ target.full_name }} <span class="muted">@{{ target.username }}</span></h1></div>
+  <span class="badge {{ target.status }}">{{ target.status }}</span>
+</header>
+
+<section class="grid-2">
+  <div class="panel">
+    <div class="panel-head"><h2>Account Control</h2></div>
+    <div class="button-row">
+      {% if target.id is number %}
+      {# Telegram user #}
+      {% for s in ['active','pending','blocked','rejected'] %}
+      <form method="post" action="{{ url_for('update_user_status', user_id=target.id) }}"><input type="hidden" name="status" value="{{ s }}"><button class="btn {% if target.status==s %}btn-primary{% endif %}">{{ s|title }}</button></form>
+      {% endfor %}
+      {% else %}
+      {# Web user #}
+      {% for s in ['approved','pending'] %}
+      <form method="post" action="{{ url_for('update_user_status', user_id=target.id) }}"><input type="hidden" name="status" value="{{ s }}"><button class="btn {% if target.status==s %}btn-primary{% endif %}">{{ s|title }}</button></form>
+      {% endfor %}
+      {% endif %}
+    </div>
+    {% if current_user.role == 'super_admin' and target.role != 'super_admin' %}
+    <form method="post" action="{{ url_for('update_user_role', user_id=target.id) }}" class="inline-form top-gap">
+      <select name="role"><option value="user" {% if target.role=='user' %}selected{% endif %}>User</option><option value="admin" {% if target.role=='admin' %}selected{% endif %}>Admin</option></select>
+      <button class="btn">Update Role</button>
+    </form>
+    {% endif %}
+  </div>
+
+  {% if target.id is not number %}
+  <div class="panel">
+    <div class="panel-head"><h2>Reset Web Password</h2></div>
+    <form method="post" action="{{ url_for('reset_web_user_password', user_id=target.id) }}" class="form-grid form-medium">
+      <label>New Password
+        <input type="password" name="new_password" minlength="8" required>
+        <small class="muted">At least 8 characters with uppercase, lowercase, digit, and special character.</small>
+      </label>
+      <label>Confirm New Password
+        <input type="password" name="confirm_password" minlength="8" required>
+      </label>
+      <button class="btn btn-primary" type="submit">Reset Password</button>
+    </form>
+  </div>
+  {% endif %}
+</section>
+
+<section class="panel">
+  <div class="panel-head"><h2>Permission Toggles</h2></div>
+  <div class="permission-grid">
+    {% for key, info in perms.items() %}
+    <label class="toggle-row">
+      <span>{{ info.label }}<small>{{ key }}</small></span>
+      <input class="perm-toggle" data-user="{{ target.id }}" data-key="{{ key }}" type="checkbox" {% if info.enabled %}checked{% endif %}>
+      <i></i>
+    </label>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="panel">
+  <div class="panel-head"><h2>Recent User Searches</h2></div>
+  <div class="table-wrap"><table><thead><tr><th>Email</th><th>Category</th><th>Status</th><th>Fetch</th><th>Time</th></tr></thead><tbody>
+    {% for s in searches %}<tr><td>{{ s.email }}</td><td>{{ s.category }}</td><td><span class="badge {{ s.status }}">{{ s.status }}</span></td><td>{{ '%.2f'|format(s.fetch_time or 0) }}s</td><td>{{ s.created_at }}</td></tr>{% else %}<tr><td colspan="5" class="muted">No searches.</td></tr>{% endfor %}
+  </tbody></table></div>
+</section>
+{% endblock %}

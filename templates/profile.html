@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Profile · {{ app_name }}{% endblock %}
+{% block content %}
+<header class="page-head">
+  <div><p class="eyebrow">Account</p><h1>Profile & Security</h1><p class="page-subtitle">Manage your credentials, linked identity, and developer access.</p></div>
+</header>
+
+<section class="panel">
+  <div class="profile-grid">
+    <div class="profile-fact"><small>Username</small><strong>{{ user.username }}</strong></div>
+    <div class="profile-fact"><small>Role</small><strong>{{ user.role|replace('_',' ')|title }}</strong></div>
+    <div class="profile-fact"><small>Approval</small><strong>{{ 'Approved' if user.approved else 'Pending' }}</strong></div>
+  </div>
+  <div class="panel-head"><h2>Change Password</h2></div>
+  <form method="post" class="form-grid form-narrow">
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token }}">
+    <label>Current Password
+      <input type="password" name="current_password" required>
+    </label>
+    <label>New Password
+      <input type="password" name="new_password" required>
+      <small class="muted">At least 8 characters, with uppercase, lowercase, digit, and special character.</small>
+    </label>
+    <label>Confirm New Password
+      <input type="password" name="confirm_password" required>
+    </label>
+    <button class="btn btn-primary" type="submit">Update Password</button>
+  </form>
+  <hr class="profile-divider">
+  <div class="panel-head"><h2>Link Telegram Account</h2></div>
+  <form method="post" class="form-grid form-narrow">
+    <input type="hidden" name="action" value="link_telegram">
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token }}">
+    <label>Telegram User ID
+      <input type="text" name="telegram_id" inputmode="numeric" value="{{ user.telegram_id or '' }}" required>
+    </label>
+    <label>Account Password
+      <input type="password" name="link_password" required>
+    </label>
+    <button class="btn btn-primary" type="submit">Link Telegram Account</button>
+  </form>
+  <hr class="profile-divider">
+  <div class="api-key-heading"><div><p class="eyebrow">Developer access</p><h2>API Keys</h2></div><a class="btn btn-small btn-ghost" href="{{ url_for('api_guide') }}">Read API Guide&nbsp; →</a></div>
+  <p class="muted">Create separate keys for your applications. Every key has the same permissions as your account.</p>
+  <form method="post" action="{{ url_for('create_api_key') }}" class="inline-form api-key-form">
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token }}">
+    <input type="text" name="key_name" placeholder="Key name (e.g., 'My Website')" required>
+    <button class="btn btn-primary" type="submit">➕ Create API Key</button>
+  </form>
+  {% if api_keys %}
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Name</th><th>Key</th><th>Created</th><th>Last Used</th><th>Action</th></tr></thead>
+        <tbody>
+        {% for key in api_keys %}
+        <tr>
+          <td><strong>{{ key.name }}</strong></td>
+          <td><code>{{ key.key }}</code></td>
+          <td>{{ key.created_at }}</td>
+          <td>{{ key.last_used or 'Never' }}</td>
+          <td>
+            <form method="post" action="{{ url_for('delete_api_key', key_id=key.id) }}" onsubmit="return confirm('Revoke this API key?')">
+              <input type="hidden" name="_csrf_token" value="{{ csrf_token }}">
+              <button class="btn btn-small btn-danger" type="submit">Revoke</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p class="muted">You have no API keys. Create one above.</p>
+  {% endif %}
+</section>
+{% endblock %}

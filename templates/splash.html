@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loading...</title>
+    <style>
+        :root {
+          --primary-color: #ff0f1f;
+          --bg-color: #000000;
+          --animation-time: 3.5s;
+          --glow-intensity: 35px;
+        }
+
+        html, body {
+          margin: 0;
+          padding: 0;
+          width: 100%;
+          height: 100%;
+        }
+
+        .container {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          width: 100%;
+          height: 100%;
+          background-color: var(--bg-color);
+          overflow: hidden;
+        }
+
+        .splash-animation {
+          display: block;
+          position: relative;
+          width: 300px;
+          height: 300px;
+          overflow: hidden;
+          animation: scale-up var(--animation-time) 0.5s ease-in forwards;
+          background-size: 4000px;
+          background-position: -1950px 0;
+          transform-origin: 30% center;
+          will-change: transform;
+        }
+
+        .splash-animation::before {
+          content: "";
+          position: absolute;
+          display: block;
+          background-color: var(--bg-color);
+          width: 150%;
+          height: 30%;
+          left: -25%;
+          bottom: -27%;
+          border-radius: 50%;
+          z-index: 5;
+          transform-origin: left center;
+        }
+
+        .segment {
+          position: absolute;
+          will-change: transform, opacity;
+        }
+
+        .segment-1 {
+          width: 19.5%;
+          height: 100%;
+          background-color: rgba(255, 15, 31, 0.5);
+          left: 22.4%;
+          top: 0;
+          transform: rotate(180deg);
+          animation: fade-segment 2s 0.6s forwards;
+        }
+
+        .segment-2 {
+          width: 19.5%;
+          height: 100%;
+          left: 57.8%;
+          top: 0;
+          transform: rotate(180deg);
+          overflow: hidden;
+        }
+
+        .segment-3 {
+          width: 19%;
+          height: 150%;
+          left: 40.5%;
+          top: -25%;
+          transform: rotate(-19.5deg);
+          box-shadow: 0px 0px 35px -12px rgba(0, 0, 0, 0.4);
+          overflow: hidden;
+        }
+
+        .gradient-effect {
+          position: absolute;
+          width: 100%;
+          height: 300%;
+          top: 0;
+          overflow: hidden;
+          will-change: transform;
+        }
+
+        .segment-1 .gradient-effect {
+          animation: gradient-flow 2.5s 1.2s forwards;
+        }
+
+        .segment-2 .gradient-effect {
+          animation: gradient-flow 2s 0.5s forwards;
+        }
+
+        .segment-3 .gradient-effect {
+          animation: gradient-flow 2s 0.8s forwards;
+        }
+
+        .gradient-effect::before {
+          display: block;
+          content: "";
+          position: absolute;
+          background-color: var(--primary-color);
+          width: 100%;
+          height: 70%;
+          box-shadow: 0px 0px var(--glow-intensity) 28px var(--primary-color);
+        }
+
+        .segment-1 .gradient-effect [class*="strip-"] {
+          bottom: 0;
+          height: 40%;
+        }
+
+        .color-beams {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          opacity: 0;
+          animation: reveal-beams 2s 1.6s forwards;
+          will-change: opacity;
+        }
+
+        .beam {
+          position: absolute;
+          display: block;
+          height: 100%;
+          box-shadow: 0px 0px 15px 2px var(--color);
+          background: var(--color);
+          opacity: 0.9;
+          filter: brightness(1.3);
+          will-change: transform;
+        }
+
+        .beam::before {
+          position: absolute;
+          content: " ";
+          display: block;
+          width: 100%;
+          height: 100%;
+          background: var(--color);
+          box-shadow: 0px 0px 15px 2px var(--color);
+        }
+
+        .left-moving-beam {
+          animation: move-left 5s forwards;
+        }
+
+        .left-moving-beam::before {
+          animation: move-left 5.5s forwards;
+        }
+
+        .right-moving-beam {
+          animation: move-right 5s forwards;
+        }
+
+        .right-moving-beam::before {
+          animation: move-right 5.5s forwards;
+        }
+
+        [class*="strip-"] {
+          display: block;
+          position: absolute;
+          bottom: 10%;
+          height: 30%;
+          box-sizing: border-box;
+          backface-visibility: hidden;
+          transform: translateZ(0);
+          will-change: opacity, transform;
+          transition: background 0.01s linear;
+        }
+
+        .paused .splash-animation,
+        .paused .segment-1,
+        .paused .segment-1 .gradient-effect,
+        .paused .segment-2 .gradient-effect,
+        .paused .segment-3 .gradient-effect,
+        .paused .color-beams,
+        .paused .left-moving-beam,
+        .paused .left-moving-beam::before,
+        .paused .right-moving-beam,
+        .paused .right-moving-beam::before {
+          animation-play-state: paused;
+        }
+
+        @keyframes gradient-flow {
+          0% { transform: translateY(0); }
+          100% { transform: translateY(-100%); }
+        }
+
+        @keyframes fade-out {
+          0% { opacity: 1; }
+          100% { opacity: 0; }
+        }
+
+        @keyframes move-right {
+          0% { transform: translate(0); opacity: 0.8; }
+          40% { transform: translate(-10px) scaleX(1); opacity: 1; }
+          50% { transform: translate(-60px); opacity: 1; }
+          100% { transform: translate(-120px) scaleX(3); opacity: 0.8; }
+        }
+
+        @keyframes move-left {
+          0% { transform: translate(0); opacity: 0.8; }
+          40% { transform: translate(10px) scaleX(1); opacity: 1; }
+          50% { transform: translate(60px); opacity: 1; }
+          100% { transform: translate(120px) scaleX(3); opacity: 0.8; }
+        }
+
+        @keyframes scale-up {
+          0% { transform: scale(1); }
+          100% { transform: scale(15); }
+        }
+
+        @keyframes reveal-beams {
+          0% { opacity: 0; }
+          40% { opacity: 0.3; }
+          60% { opacity: 0.8; }
+          100% { opacity: 1; }
+        }
+
+        @keyframes fade-segment {
+          0% { background-color: rgba(255, 15, 31, 0.5); }
+          100% { background-color: rgba(255, 15, 31, 0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="splash-animation">
+            <div class="segment segment-1">
+                <div class="gradient-effect" id="grad-effect-1"></div>
+                <div class="color-beams" id="beams-1"></div>
+            </div>
+            <div class="segment segment-2">
+                <div class="gradient-effect" id="grad-effect-2"></div>
+            </div>
+            <div class="segment segment-3">
+                <div class="gradient-effect" id="grad-effect-3"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+          const numStrips = 20;
+          const beamColors = [
+            "#ff1500", "#ffff00", "#ff00ff", "#00ff9f", "#ff5500",
+            "#ffaa00", "#00a9ff", "#bf00ff", "#ffdd00", "#00ffff",
+            "#ff153b", "#ff00cc"
+          ];
+
+          function generateStripData() {
+            const data = [];
+            const stripWidth = 100 / numStrips;
+            for (let i = 0; i < numStrips; i++) {
+              const left = i * stripWidth;
+              const width = stripWidth + 0.5;
+              const fillPercentage = 10 + Math.random() * 40;
+              const fadePoint = 60 + Math.random() * 40;
+              const colorIndex = Math.floor(Math.random() * beamColors.length);
+              const color = beamColors[colorIndex];
+              const bg = `linear-gradient(to bottom, ${color} 0%, ${color} ${fillPercentage}%, rgba(0, 0, 0, 0) ${fadePoint}%, rgba(0, 0, 0, 0) 100%)`;
+              data.push({ left: left + "%", width: width + "%", bg: bg, color: color });
+            }
+            return data;
+          }
+
+          function generateBeamData() {
+            const numBeams = 28;
+            const data = [];
+            for (let i = 0; i < numBeams; i++) {
+              const color = beamColors[Math.floor(Math.random() * beamColors.length)];
+              const width = (0.5 + Math.random() * 2.5).toFixed(1);
+              const left = ((i / numBeams) * 100 + (Math.random() * 1.5 - 0.75)).toFixed(1);
+              data.push({ left: left + "%", width: width + "%", color: color });
+            }
+            return data.sort((a, b) => parseFloat(a.left) - parseFloat(b.left));
+          }
+
+          function createStrips(containerId, stripData) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            const fragment = document.createDocumentFragment();
+            stripData.forEach((strip, index) => {
+              const stripElement = document.createElement("span");
+              stripElement.className = `strip-${index + 1}`;
+              stripElement.style.left = strip.left;
+              stripElement.style.width = strip.width;
+              stripElement.style.background = strip.bg;
+              stripElement.style.zIndex = index;
+              fragment.appendChild(stripElement);
+            });
+            container.appendChild(fragment);
+          }
+
+          function createBeams(containerId, beamData) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            const fragment = document.createDocumentFragment();
+            beamData.forEach((beam, index) => {
+              const beamElement = document.createElement("span");
+              beamElement.className = `beam beam-${index + 1} ${index % 2 === 0 ? "left-moving-beam" : "right-moving-beam"}`;
+              beamElement.style.left = beam.left;
+              beamElement.style.width = beam.width;
+              beamElement.style.setProperty("--color", beam.color);
+              const randomDelay = (Math.random() * 2).toFixed(2);
+              beamElement.style.animationDelay = `${randomDelay}s`;
+              const brightness = 1 + Math.random() * 0.8;
+              beamElement.style.filter = `brightness(${brightness})`;
+              fragment.appendChild(beamElement);
+            });
+            container.appendChild(fragment);
+          }
+
+          const stripData = generateStripData();
+          const beamData = generateBeamData();
+          createStrips("grad-effect-1", stripData);
+          createStrips("grad-effect-2", stripData);
+          createStrips("grad-effect-3", stripData);
+          createBeams("beams-1", beamData);
+        });
+
+        setTimeout(function() {
+          window.location.href = "{{ url_for('login') }}";
+        }, 300);
+    </script>
+</body>
+</html>

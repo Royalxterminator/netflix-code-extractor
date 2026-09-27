@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Search · {{ app_name }}{% endblock %}
+{% block content %}
+<header class="page-head">
+  <div><p class="eyebrow">Fast IMAP Search</p><h1>Email Search</h1><p class="page-subtitle">Choose a workflow, paste one or more addresses, and retrieve matching messages securely.</p></div>
+</header>
+
+<section class="search-hero panel">
+  <form id="search-form" class="search-form" method="post">
+    <div class="category-grid">
+      {% for key, cat in categories.items() %}
+      <label class="category-card">
+        <input type="radio" name="category" value="{{ key }}" {% if loop.first %}checked{% endif %} data-locked="{{ '1' if cat.locked else '0' }}">
+        <span>{{ cat.icon }}</span><strong>{{ cat.label }}</strong>{% if cat.locked %}<small class="muted">🔒</small>{% endif %}
+      </label>
+      {% endfor %}
+    </div>
+    <label class="full">Emails <small>Paste one or many emails</small><textarea name="emails" rows="7" placeholder="abc@example.com&#10;xyz@example.com"></textarea></label>
+    <button class="btn btn-primary btn-glow" type="submit">Execute Search</button>
+  </form>
+  <div id="scanner" class="scanner hidden"><span></span></div>
+  <section class="results-grid" id="results"></section>
+</section>
+
+<div class="modal-backdrop" id="lock-modal" aria-hidden="true">
+  <div class="modal-card" role="dialog" aria-modal="true">
+    <div class="panel-head"><h2>🔒 Category Locked</h2></div>
+    <p id="lock-modal-text" class="muted" style="margin:0 0 14px;">This category is locked. Enter the password to continue.</p>
+    <input type="password" id="lock-modal-password" placeholder="Enter password" autocomplete="off" style="width:100%;padding:13px 14px;border:1px solid var(--line);border-radius:14px;background:rgba(0,0,0,.28);color:#fff;margin-bottom:14px;">
+    <div class="actions" style="justify-content:flex-end;">
+      <button class="btn" type="button" data-close-lock>Cancel</button>
+      <button class="btn btn-primary" type="button" id="lock-modal-submit">Unlock</button>
+    </div>
+  </div>
+</div>
+{% endblock %}

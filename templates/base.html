@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="csrf-token" content="{{ csrf_token }}">
+  <title>{% block title %}{{ app_name }}{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  {% block head %}{% endblock %}
+</head>
+<body>
+  <div class="orb orb-a"></div>
+  <div class="orb orb-b"></div>
+  {% if not current_user %}
+  <a href="{{ url_for('login') }}" style="position:fixed;top:16px;right:20px;z-index:200;padding:9px 16px;border-radius:8px;background:#b80257;color:#fff;text-decoration:none;font-weight:600;">Admin Login</a>
+  {% endif %}
+  {% if current_user %}
+  <button class="mobile-menu-btn" type="button" aria-label="Open menu" aria-expanded="false">☰</button>
+  <div class="sidebar-backdrop"></div>
+  {% endif %}
+  <div class="app-shell">
+    {% if current_user %}
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark"><span></span></div>
+        <div>
+          <strong>{{ app_name }}</strong>
+          <small>Operations workspace</small>
+        </div>
+      </div>
+      <nav>
+        <span class="nav-section-label">Workspace</span>
+        <a href="{{ url_for('search_page') }}" class="nav-link {% if request.endpoint == 'search_page' %}active{% endif %}"><b>01</b><span>Search inbox</span></a>
+        {% if is_admin_user %}
+        <span class="nav-section-label">Administration</span>
+        <a href="{{ url_for('dashboard') }}" class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}"><b>02</b><span>Dashboard</span></a>
+        <a href="{{ url_for('logs_page') }}" class="nav-link {% if request.endpoint == 'logs_page' %}active{% endif %}"><b>03</b><span>Audit logs</span></a>
+        <a href="{{ url_for('settings_page') }}" class="nav-link {% if request.endpoint == 'settings_page' %}active{% endif %}"><b>04</b><span>Settings</span></a>
+        {% endif %}
+      </nav>
+      <div class="side-user">
+        <span class="status-dot"></span>
+        <div><strong>{{ current_user.username }}</strong><small>{{ current_user.role|replace('_',' ') }}</small></div>
+      </div>
+      <div class="nav-divider"></div>
+        <a href="{{ url_for('profile') }}" class="nav-link utility-link {% if request.endpoint == 'profile' %}active{% endif %}"><b>↗</b><span>Profile</span></a>
+        <a href="{{ url_for('api_guide') }}" class="nav-link utility-link {% if request.endpoint == 'api_guide' %}active{% endif %}"><b>⌘</b><span>API guide</span></a>
+        <a class="logout" href="{{ url_for('logout') }}">Sign out <span>→</span></a>
+    </aside>
+    {% endif %}
+
+    <main class="main {% if not current_user %}auth-main{% endif %}">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="flash-wrap">
+          {% for category, message in messages %}
+          <div class="flash {{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+        {% endif %}
+      {% endwith %}
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+
+  <div id="toast-zone"></div>
+  <script src="{{ url_for('static', filename='js/app.js') }}?v=lock-modal-2"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

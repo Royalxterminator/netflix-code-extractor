@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Logs · {{ app_name }}{% endblock %}
+{% block content %}
+<header class="page-head">
+  <div><p class="eyebrow">Audit Trail</p><h1>Logs & History</h1></div>
+  <a class="btn" href="{{ url_for('download_data') }}">⬇️ Download Data</a>
+</header>
+<section class="grid-2">
+  <div class="panel"><div class="panel-head"><div><h2>Activity Events</h2><p>Immutable operational history from the control room.</p></div></div><div class="activity-feed tall timeline">
+    {% for e in events %}<div class="activity-item"><span>{{ e.created_at }}</span>{{ e.message }} <small>{{ e.event_type }}</small></div>{% else %}<p class="muted">No events.</p>{% endfor %}
+  </div></div>
+  <div class="panel"><div class="panel-head"><div><h2>Search History</h2><p>Search requests and response times.</p></div></div><div class="table-wrap"><table class="responsive-table"><thead><tr><th>User</th><th>Email</th><th>Category</th><th>Status</th><th>Fetch</th><th>Time</th></tr></thead><tbody>
+    {% for s in searches %}<tr><td><strong>{{ s.display_name }}</strong><br><small>@{{ s.username or '—' }} · {{ s.user_type }} ID: {{ s.user_id }} · Telegram: {{ s.telegram_id or 'Not linked' }}</small></td><td>{{ s.email }}</td><td>{{ s.category }}</td><td><span class="badge {{ s.status }}">{{ s.status }}</span></td><td>{{ '%.2f'|format(s.fetch_time or 0) }}s</td><td>{{ s.created_at }}</td></tr>{% else %}<tr><td colspan="6" class="muted">No searches.</td></tr>{% endfor %}
+  </tbody></table></div></div>
+</section>
+{% endblock %}

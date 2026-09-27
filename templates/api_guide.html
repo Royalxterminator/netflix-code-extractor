@@ -1,0 +1,47 @@
+﻿{% extends "base.html" %}
+{% block title %}API Guide · {{ app_name }}{% endblock %}
+{% block content %}
+<div class="api-page">
+  <section class="api-hero"><div class="api-hero-glow"></div><div class="api-hero-content"><div class="api-kicker"><span class="api-kicker-dot"></span> Developer platform</div><h1>Build with the<br><span>Email Bot API</span></h1><p>Connect your applications to your assigned email accounts with a secure, simple API.</p><div class="api-base-url"><span class="api-status-dot"></span><code>{{ api_base_url }}</code><button class="icon-copy" type="button" data-copy-text="{{ api_base_url }}" aria-label="Copy API base URL" title="Copy base URL">⧉</button></div></div><div class="api-hero-orbit"><div class="api-orbit-core">&lt;/&gt;</div></div></section>
+
+  <section class="api-quickstart"><div class="api-section-heading"><span class="section-number">01</span><div><p class="eyebrow">Get connected</p><h2>From zero to first request</h2></div></div><div class="quickstart-grid"><a class="quickstart-card" href="{{ url_for('profile') }}"><span class="quickstart-icon red">⌘</span><span class="quickstart-step">STEP 01</span><strong>Create an API key</strong><small>Generate and name a key from your Profile.</small><span class="quickstart-arrow">→</span></a><div class="quickstart-card"><span class="quickstart-icon purple">↗</span><span class="quickstart-step">STEP 02</span><strong>Add authentication</strong><small>Send your key as a Bearer token or API header.</small><span class="quickstart-arrow">→</span></div><div class="quickstart-card"><span class="quickstart-icon blue">⚡</span><span class="quickstart-step">STEP 03</span><strong>Make a request</strong><small>Fetch assigned email content from any app.</small><span class="quickstart-arrow">✓</span></div></div></section>
+
+  <div class="api-layout"><aside class="api-toc"><p class="api-toc-label">ON THIS PAGE</p><a href="#authentication" class="api-toc-link active">Authentication <span>01</span></a><a href="#endpoints" class="api-toc-link">Endpoints <span>02</span></a><a href="#choices" class="api-toc-link">Fetch choices <span>03</span></a><a href="#examples" class="api-toc-link">Code examples <span>04</span></a><a href="#errors" class="api-toc-link">Errors & security <span>05</span></a><div class="api-toc-help"><span>Need help?</span><a href="{{ url_for('profile') }}">Manage API keys →</a></div></aside>
+    <main class="api-content">
+      <section id="authentication" class="api-section"><div class="api-section-heading"><span class="section-number">01</span><div><p class="eyebrow">Secure by default</p><h2>Authentication</h2></div></div><p class="api-lead">Every protected request needs an API key. Keep keys server-side and never expose them in public browser code.</p><div class="auth-methods"><div class="auth-method"><div><span class="method-icon">✦</span><strong>Bearer token</strong><small>Recommended</small></div><button class="copy-line" data-copy-text="Authorization: Bearer YOUR_API_KEY">Copy header <span>⧉</span></button><code>Authorization: Bearer YOUR_API_KEY</code></div><div class="auth-method"><div><span class="method-icon muted-icon">⌁</span><strong>X-Api-Key</strong><small>Alternative</small></div><button class="copy-line" data-copy-text="X-Api-Key: YOUR_API_KEY">Copy header <span>⧉</span></button><code>X-Api-Key: YOUR_API_KEY</code></div></div></section>
+
+      <section id="endpoints" class="api-section"><div class="api-section-heading"><span class="section-number">02</span><div><p class="eyebrow">Explore the API</p><h2>Endpoints</h2></div></div><div class="endpoint-list"><article class="endpoint-card compact"><div class="endpoint-top"><span class="http-method get">GET</span><code>/api/health</code><span class="endpoint-public">Public</span></div><p>Check that the API is online and responding.</p><div class="endpoint-response"><span>RESPONSE</span><code>{"status":"ok"}</code></div></article><article class="endpoint-card compact"><div class="endpoint-top"><span class="http-method get">GET</span><code>/api/emails</code><span class="endpoint-lock">🔒 Authenticated</span></div><p>List the active email assignments available to your account.</p><div class="endpoint-response"><span>RESPONSE</span><code>{"emails":[...]}</code></div></article><article class="endpoint-card compact"><div class="endpoint-top"><span class="http-method get">GET</span><code>/api/permissions</code><span class="endpoint-lock">🔒 Authenticated</span></div><p>See the fetch categories enabled for your account.</p><div class="endpoint-response"><span>RESPONSE</span><code>{"permissions":[...]}</code></div></article><article class="endpoint-card fetch-endpoint"><div class="endpoint-top"><span class="http-method post">POST</span><code>/api/fetch</code><span class="endpoint-lock">🔒 Authenticated</span></div><p>Fetch content from one or more assigned email accounts.</p><div class="endpoint-details"><div><span>BODY</span><code>email <em>string</em></code><code>emails <em>string[]</em></code><code>choice <em>string</em></code></div><div><span>LIMIT</span><strong>50 emails / request</strong></div></div></article></div></section>
+
+      <section id="choices" class="api-section"><div class="api-section-heading"><span class="section-number">03</span><div><p class="eyebrow">Request parameters</p><h2>Fetch choices</h2></div></div><p class="api-lead">Pass one of these values as <code>choice</code> when calling <code>/api/fetch</code>.</p><div class="choice-grid"><div class="choice-card"><span class="choice-symbol">⌁</span><div><strong>login_code</strong><small>Login code</small></div></div><div class="choice-card"><span class="choice-symbol">↻</span><div><strong>reset</strong><small>Password reset link</small></div></div><div class="choice-card"><span class="choice-symbol">⌂</span><div><strong>household</strong><small>Household link</small></div></div><div class="choice-card"><span class="choice-symbol">✓</span><div><strong>verify_email</strong><small>Verify-email link</small></div></div><div class="choice-card"><span class="choice-symbol">#</span><div><strong>verification</strong><small>Verification code</small></div></div><div class="choice-card"><span class="choice-symbol">#</span><div><strong>verification_after_login</strong><small>Post-login verification code</small></div></div><div class="choice-card"><span class="choice-symbol">▣</span><div><strong>tv_login</strong><small>TV login link</small></div></div></div></section>
+
+      <section id="examples" class="api-section"><div class="api-section-heading"><span class="section-number">04</span><div><p class="eyebrow">Ready to copy</p><h2>Code examples</h2></div></div><div class="code-window"><div class="code-window-head"><div class="code-dots"><i></i><i></i><i></i></div><div class="code-tabs"><button class="code-tab active" data-code-tab="curl">cURL</button><button class="code-tab" data-code-tab="python">Python</button><button class="code-tab" data-code-tab="javascript">JavaScript</button></div><button class="copy-code" data-copy-target="curl-code">Copy code <span>⧉</span></button></div><div class="code-pane active" data-code-pane="curl" id="curl-code"><pre><code>curl -X POST \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"email":"shared@example.com","choice":"login_code"}' \
+  {{ api_base_url }}/api/fetch</code></pre></div><div class="code-pane" data-code-pane="python"><pre><code>import requests
+
+response = requests.post(
+    "{{ api_base_url }}/api/fetch",
+    headers={"Authorization": "Bearer YOUR_API_KEY"},
+    json={"email": "shared@example.com", "choice": "login_code"},
+    timeout=30,
+)
+print(response.json())</code></pre></div><div class="code-pane" data-code-pane="javascript"><pre><code>const response = await fetch(
+  "{{ api_base_url }}/api/fetch",
+  {
+    method: "POST",
+    headers: {
+      "Authorization": "Bearer YOUR_API_KEY",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ email: "shared@example.com", choice: "login_code" })
+  }
+);
+console.log(await response.json());</code></pre></div></div></section>
+
+      <section id="errors" class="api-section last-api-section"><div class="api-section-heading"><span class="section-number">05</span><div><p class="eyebrow">Handle with care</p><h2>Errors & security</h2></div></div><div class="errors-security-grid"><div class="status-list"><div><span class="status-code success">200</span><span>Request successful</span></div><div><span class="status-code warning">400</span><span>Invalid request data</span></div><div><span class="status-code danger">401</span><span>Missing or invalid API key</span></div><div><span class="status-code danger">403</span><span>Permission or assignment denied</span></div><div><span class="status-code danger">500</span><span>Server-side error</span></div></div><div class="security-callout"><span class="security-icon">⚠</span><div><strong>Protect your API keys</strong><p>Never commit keys to Git, place them in frontend JavaScript, or share them in screenshots. If a key is exposed, revoke it from Profile immediately and create a replacement.</p><a href="{{ url_for('profile') }}">Manage keys →</a></div></div></div></section>
+    </main>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}<script>window.apiGuidePage = true;</script>{% endblock %}

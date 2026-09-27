@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Users · {{ app_name }}{% endblock %}
+{% block content %}
+<header class="page-head"><div><p class="eyebrow">Administration / Accounts</p><h1>Approve with confidence.</h1><p class="page-subtitle">Verify identity, grant the right access, and keep your workspace moving.</p></div></header>
+{% if current_user.role in ('admin', 'super_admin') %}
+<section class="approval-card panel">
+  <div class="approval-intro"><div class="approval-number">01</div><div><p class="eyebrow">Approval desk</p><h2>Find an account to approve</h2><p>Use a username or Web ID to confirm the person before assigning permissions.</p></div></div>
+  <form class="approval-form" method="post" action="{{ url_for('approve_user_by_username') }}">
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token }}">
+    <label class="lookup-field"><span>Account identifier</span><input name="username" placeholder="Username or WEB-000123" required autocomplete="off"><small>Example: WEB-000123 or alex</small></label>
+    <div class="permission-heading"><div><p class="eyebrow">Access package</p><h3>Choose permissions</h3><small>Only grant what this account needs today.</small></div><button class="text-button" type="button" data-select-permissions>Select recommended</button></div>
+    <div class="approval-permissions">
+      {% for permission in grantable_permissions %}
+      <label class="permission-card"><input type="checkbox" name="permissions" value="{{ permission }}"><span class="permission-check">✓</span><span><strong>{{ permission }}</strong><small>{% if permission == 'API Access' %}Connect approved integrations{% elif permission == 'Household' %}Manage household access{% elif permission == 'Reset' %}Request password resets{% else %}Use the {{ permission|lower }} workflow{% endif %}</small></span></label>
+      {% else %}
+      <p class="muted">No permissions are assigned to your admin account, so there are no permissions you can grant.</p>
+      {% endfor %}
+    </div>
+    <div class="approval-footer"><div><span class="approval-summary-dot"></span><span data-permission-summary>Select permissions to continue</span></div><button class="btn btn-primary" type="submit">Approve account <span>→</span></button></div>
+  </form>
+</section>
+{% endif %}
+<div class="modal-backdrop verification-modal-backdrop" id="verification-permission-modal" aria-hidden="true">
+  <div class="modal-card verification-modal" role="dialog" aria-modal="true" aria-labelledby="verification-modal-title" aria-describedby="verification-modal-description">
+    <div class="verification-modal-icon" aria-hidden="true">!</div>
+    <div class="verification-modal-content">
+      <p class="eyebrow">Sensitive permission</p>
+      <h2 id="verification-modal-title">Grant Verification Code access?</h2>
+      <p id="verification-modal-description">This permission can expose verification codes used to access accounts. Only continue if you trust this person and they need this access for their role.</p>
+      <div class="verification-modal-warning"><strong>Before you proceed</strong><span>Review the account identifier and grant the minimum permissions required.</span></div>
+      <div class="verification-modal-actions">
+        <button class="btn btn-dark" type="button" data-close-verification-modal>Cancel</button>
+        <button class="btn btn-primary" type="button" data-proceed-verification>Proceed anyway</button>
+      </div>
+    </div>
+  </div>
+</div>
+<section class="panel">
+  <div class="panel-head"><div><p class="eyebrow">Directory</p><h2>Account overview</h2></div><span class="table-caption">{{ users|length }} visible accounts</span></div>
+  <form class="toolbar directory-toolbar" method="get">
+    <input name="q" value="{{ query }}" placeholder="Search username/name">
+    <select name="status">
+      {% for s in ['all','pending','approved','active','blocked','rejected'] %}
+      <option value="{{s}}" {% if status==s %}selected{% endif %}>{{s|title}}</option>
+      {% endfor %}
+    </select>
+    <button class="btn btn-dark">Filter results <span>→</span></button>
+  </form>
+  <div class="table-wrap">
+    <table class="responsive-table">
+      <thead><tr><th>User</th><th>Username</th><th>IDs</th><th>Role</th><th>Status</th><th>Created</th><th></th></tr></thead>
+      <tbody>
+      {% for user in users %}
+      <tr>
+        <td data-label="Name">{{ user.full_name }}</td><td data-label="Username">@{{ user.username }}</td><td data-label="IDs">Web ID: {{ user.web_id or '—' }}<br>Telegram: {{ user.telegram_id or 'Not linked' }}</td><td data-label="Role">{{ user.role }}</td><td data-label="Status"><span class="badge {{ user.status }}">{{ user.status }}</span></td><td data-label="Created">{{ user.created_at }}</td><td data-label="Action"><a class="btn btn-small" href="{{ url_for('user_detail', user_id=user.id) }}">Manage</a></td>
+      </tr>
+      {% else %}<tr><td colspan="7" class="muted">No users found.</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}
