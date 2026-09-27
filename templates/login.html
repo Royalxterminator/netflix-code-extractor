@@ -18,7 +18,7 @@
       {% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}
     {% endwith %}
     {% if error %}<div class="flash danger">{{ error }}</div>{% endif %}
-    <form method="post" action="{{ url_for('login') }}">
+    <form method="post" action="/login">
       <input type="hidden" name="_csrf_token" value="{{ csrf_token }}">
       <div class="user"><label for="username">Username</label><input id="username" type="text" name="username" autocomplete="username" required></div>
       <div class="user"><label for="password">Password</label><input id="password" type="password" name="password" autocomplete="current-password" required></div>

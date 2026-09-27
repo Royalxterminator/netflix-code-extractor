@@ -332,7 +332,8 @@ def _make_url_for(request: Request):
         if name == 'static':
             if 'filename' in kwargs:
                 kwargs['path'] = kwargs.pop('filename')
-            return request.url_for(name, **kwargs)
+            url = request.url_for(name, **kwargs)
+            return url.path + (f'?{url.query}' if url.query else '')
 
         path_params = {}
         query_params = {}
@@ -351,7 +352,8 @@ def _make_url_for(request: Request):
                     break
         if not matched:
             path_params = kwargs
-        url = str(request.url_for(name, **path_params))
+        url_obj = request.url_for(name, **path_params)
+        url = url_obj.path + (f'?{url_obj.query}' if url_obj.query else '')
         if query_params:
             url += ('&' if '?' in url else '?') + urlencode(query_params)
         return url
@@ -359,7 +361,7 @@ def _make_url_for(request: Request):
     return url_for
 
 def _redirect(request: Request, endpoint, **params):
-    return RedirectResponse(request.url_for(endpoint, **params), status_code=302)
+    return RedirectResponse(_make_url_for(request)(endpoint, **params), status_code=302)
 
 # ---------------------- Template Context Processor ----------------------
 def _context_processor(request: Request):
